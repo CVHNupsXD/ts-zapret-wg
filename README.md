@@ -2,6 +2,8 @@
 
 Tailscale exits node
 
+AdGuardHome
+
 Zapret
 
 WireGuard
