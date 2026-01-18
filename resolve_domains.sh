@@ -2,12 +2,14 @@
 set -euo pipefail
 
 
-DOH_URL="https://public.dns.iij.jp/dns-query"
+DOH_SERVERS=(
+    "https://public.dns.iij.jp/dns-query"
+)
 INPUT_FILE="domains.txt"
 OUTPUT_FILE="ips.txt"
 TEMP_FILE="$(mktemp)"
 
-echo "Starting domain resolution using JP DoH (IIJ)..."
+echo "Starting domain resolution using JP DoH..."
 
 if [[ ! -f "$INPUT_FILE" ]]; then
     echo "Error: $INPUT_FILE not found!"
@@ -32,17 +34,26 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     domain="$line"
     echo "Resolving: $domain"
     
-
-    if result=$(dog A "$domain" --https @"$DOH_URL" --short 2>&1); then
-        while IFS= read -r ip; do
-            if [[ -n "$ip" ]]; then
-                if [[ "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    resolved=false
+    for doh_url in "${DOH_SERVERS[@]}"; do
+        for attempt in 1 2 3; do
+            if result=$(dog A "$domain" --https @"$doh_url" --short 2>/dev/null); then
+                ip=$(echo "$result" | grep -oE '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$' | head -n 1)
+                if [[ -n "$ip" ]]; then
                     echo "$domain=$ip" >> "$TEMP_FILE"
+                    resolved=true
+                    break 2
                 fi
             fi
-        done <<< "$result"
-    else
-        echo "Warning: Failed to resolve $domain" >&2
+            sleep 1
+        done
+        if [[ "$resolved" == "false" ]]; then
+            echo "Trying backup DNS for $domain..."
+        fi
+    done
+    
+    if [[ "$resolved" == "false" ]]; then
+        echo "Warning: Failed to resolve $domain with all DNS servers" >&2
     fi
 done < "$INPUT_FILE"
 
