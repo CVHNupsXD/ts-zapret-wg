@@ -108,7 +108,7 @@ docker exec ts-zapret-wg ipset list vpn_domains
 ## 📁 File Structure
 
 ```
-dmm-wg-routing/
+ts-zapret-wg/
 ├── docker/
 │   └── Dockerfile
 ├── docker-compose.yml
