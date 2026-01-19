@@ -3,13 +3,14 @@ name: Resolve Domains via JP DoH
 on:
   schedule:
     - cron: '0 */12 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   resolve-and-commit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Checkout repository
