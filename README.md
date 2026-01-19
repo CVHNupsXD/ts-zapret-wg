@@ -27,7 +27,7 @@ Tailscale Client → tailscale0
                iptables rules
           ┌────────┴────────┐
           ↓                 ↓
-    dst ∈ dpi_domains  dst ∈ vpn_domains
+     Port 80/443      dst ∈ vpn_domains
           ↓                 ↓
     zapret (DPI)       WireGuard (VPN)
           ↓                 ↓
@@ -116,12 +116,10 @@ dmm-wg-routing/
 │   ├── entrypoint.sh              # Startup orchestration
 │   ├── setup-iptables.sh          # iptables rules
 │   ├── resolve-domains-local.sh   # Local DoH domain resolver
-│   ├── update-vpn-ipset.sh        # Update ipset + AdGuard sync
-│   └── update-dpi-ipset.sh        # DPI bypass IPs
+│   └── update-vpn-ipset.sh        # Update ipset + AdGuard sync
 ├── config/
 │   ├── wg0.conf.example           # WireGuard template
 │   ├── domains.txt                # Domains to resolve
-│   ├── dpi-domains.txt            # DPI bypass domains
 │   └── zapret-hosts-user.txt      # Zapret hostlist
 └── .env.example                   # Environment variables template
 ```
@@ -136,7 +134,7 @@ dmm-wg-routing/
 
 ### Container Startup
 1. **IP forwarding** enabled
-2. **ipset** sets created (`vpn_domains`, `dpi_domains`)
+2. **ipset** set created (`vpn_domains`)
 3. **WireGuard** started with VPN config
 4. **Policy routing** configured (mark 0x1 → wg0)
 5. **iptables** rules applied
@@ -148,7 +146,7 @@ dmm-wg-routing/
 ### Traffic Routing
 | Destination | Action |
 |-------------|--------|
-| ∈ `dpi_domains` | → zapret → Normal WAN |
+| Port 80, 443 | → zapret → Normal WAN |
 | ∈ `vpn_domains` | → Mark 0x1 → WireGuard → JP VPN |
 | Everything else | → Normal WAN |
 
@@ -170,7 +168,6 @@ tailscale status
 
 # Check ipset
 ipset list vpn_domains
-ipset list dpi_domains
 
 # Test IP routing
 ip route get xxx.xx.xx.xxx

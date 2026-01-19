@@ -15,7 +15,7 @@ done
 
 echo "Creating ipset sets..."
 ipset create vpn_domains hash:ip timeout 3600 -exist
-ipset create dpi_domains hash:ip timeout 0 -exist
+ipset create vpn_domains hash:ip timeout 3600 -exist
 
 if [[ -f "$WG_CONFIG" ]]; then
     echo "Starting WireGuard..."
@@ -51,10 +51,7 @@ while ip rule del table 51820 2>/dev/null; do :; done
 while ip rule del from all lookup main suppress_prefixlength 0 2>/dev/null; do :; done
 
 ip route add default dev wg0 table 100 2>/dev/null || true
-ip rule add fwmark 0x1 table 100 2>/dev/null || true
-
-echo "Populating DPI domains..."
-/scripts/update-dpi-ipset.sh
+ip rule add fwmark 0x1 table 100 2>/dev/null || 
 
 echo "Starting zapret..."
 pkill -f nfqws 2>/dev/null || true
