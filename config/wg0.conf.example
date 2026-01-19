@@ -1,0 +1,23 @@
+[Interface]
+# Your WireGuard private key
+PrivateKey = YOUR_PRIVATE_KEY_HERE
+
+# Your assigned VPN IP address
+Address = 10.0.0.2/32
+
+# IMPORTANT: Disable automatic routing - we use policy routing instead
+# This prevents WireGuard from routing ALL host traffic through VPN
+Table = off
+
+[Peer]
+# VPN server's public key
+PublicKey = SERVER_PUBLIC_KEY_HERE
+
+# VPN server endpoint (Japan server)
+Endpoint = jp-server.example.com:51820
+
+# Route all traffic through VPN (but only for policy-routed packets)
+AllowedIPs = 0.0.0.0/0
+
+# Keep connection alive
+PersistentKeepalive = 25

@@ -1,0 +1,14 @@
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+.env
+config/wg0.conf

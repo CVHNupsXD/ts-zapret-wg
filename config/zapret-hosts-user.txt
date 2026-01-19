@@ -1,0 +1,13 @@
+# zapret hostlist - domains for DPI bypass
+# One domain per line, supports wildcards
+
+medium.com
+reddit.com
+old.reddit.com
+steamcommunity.com
+thepiratebay.org
+rutracker.org
+nyaa.si
+docln.net
+ln.hako.vn
+mangadex.org

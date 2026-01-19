@@ -1,0 +1,31 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: ts-zapret-wg
+    network_mode: host
+    privileged: true
+    restart: unless-stopped
+
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./config:/config:ro
+      - /dev/net/tun:/dev/net/tun
+      - tailscale-state:/var/lib/tailscale
+
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY:-}
+      - WG_CONFIG=/config/wg0.conf
+      - AGH_URL=${AGH_URL:-http://127.0.0.1:3000}
+      - AGH_USER=${AGH_USER:-admin}
+      - AGH_PASS=${AGH_PASS:-admin}
+      - RESOLVE_INTERVAL=${RESOLVE_INTERVAL:-43200}
+
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_MODULE
+
+volumes:
+  tailscale-state:

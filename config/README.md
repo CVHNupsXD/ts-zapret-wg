@@ -121,7 +121,6 @@ dmm-wg-routing/
 ├── config/
 │   ├── wg0.conf.example           # WireGuard template
 │   ├── domains.txt                # Domains to resolve
-│   ├── dpi-domains.txt            # DPI bypass domains
 │   └── zapret-hosts-user.txt      # Zapret hostlist
 └── .env.example                   # Environment variables template
 ```
